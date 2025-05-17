@@ -1,8 +1,14 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import style from "./adminsignup.module.css"
 
 export default function AfterSignupAdmin(){
   // const [inputs, setInputs]= useState([0])
+  const [extraChange, setExtraChange]= useState({
+   
+  })
+
+
 
   const [formData, setFormData]= useState(
     {
@@ -10,24 +16,55 @@ export default function AfterSignupAdmin(){
       gstno:"",
       uhbvngstno:"",
       contactno:"",
-      inputs:[0]
+      inputs:[0],
+      newData:{}
     }
   )
 
+    useEffect(()=>{
+    setFormData((prev)=>({...prev,newData:{...extraChange}}))
+  },[extraChange])
+
+  const extraChangeHandle = (e) => {
+  const { name, value } = e.target;
+
+  setExtraChange((prev) => ({
+    ...prev,
+    [name]: value
+  }));
+};
+
+
+ const addInput = (e) => {
+  e.preventDefault();
+  const newId = formData.inputs.length;
+  setFormData(prev => ({
+    ...prev,
+    inputs: [...prev.inputs, newId]
+  }));
+  setExtraChange(prev => ({
+    ...prev,
+    [`new${newId}`]: ""  // Initialize new field
+  }));
+};
+
+
+  
+
   const handleChange =(e)=>{
     e.preventDefault();
-    setFormData({...formData,[e.target.name]:[e.target.value]})
+    setFormData({...formData,[e.target.name]:e.target.value})
     console.log(formData)
   }
 
-const handleSubmit = ()=>{
+const handleSubmit = (e)=>{
   e.preventDefault();
+
+ 
+  console.log(formData); 
 }
 
-  const addInput=(e)=>{
-    e.preventDefault();
-    setFormData({...formData,inputs : [...formData.inputs,formData.inputs.length]})
-  }
+ 
     return(
 <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-xl rounded-2xl">
   <div className="mb-6 text-center">
@@ -101,19 +138,19 @@ const handleSubmit = ()=>{
             name={`new${id}`}
             type="text"
             placeholder="Enter your details"
-            value={formData.inputs}
-            onChange={handleChange}
+            value={extraChange[`new${id}`] || ""}
+            onChange={extraChangeHandle}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       ))}
     </div>
     <div>
-        <button onClick={addInput}>+</button>
+        <button onClick={addInput}  className={style.addNewFieldL}>+</button>
     </div>
 
     <div>
-        <button type="submit">Submit</button>
+        <button type="submit" className={style.authloginSubmitbtn}>Submit</button>
     </div>
   </form>
 </div>
